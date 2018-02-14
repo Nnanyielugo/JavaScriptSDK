@@ -1,5 +1,6 @@
 encrypt.tar
 credentials.tar
+.DS_Store
 smtp.json
 gc_cred.json
 .vscode/
