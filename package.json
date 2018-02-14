@@ -13,7 +13,11 @@
   "scripts": {
     "start": "webpack --watch --progress",
     "test": "npm run test-browser && npm run test-node",
+<<<<<<< HEAD
     "test-browser": "mocha-phantomjs -p ./node_modules/phantomjs/lib/phantom/bin/phantomjs -s webSecurityEnabled=false --ssl-protocol=any test/index.html",
+=======
+    "test-browser": "mocha-phantomjs -p /usr/local/phantomjs/bin/phantomjs -s webSecurityEnabled=false --ssl-protocol=any test/index.html",
+>>>>>>> 2c42fef3194ac069ba152702441286dbff74e09b
     "test-node": "./node_modules/.bin/mocha --reporter spec test/test.js",
     "2npm": "publish"
   },
@@ -28,7 +32,11 @@
     "localStorage": "^1.0.3",
     "localforage": "^1.5.0",
     "socket.io-client": "^1.7.1",
+<<<<<<< HEAD
     "phantomjs": "^2.1.7"
+=======
+    "phantomjs-prebuilt": "*"
+>>>>>>> 2c42fef3194ac069ba152702441286dbff74e09b
   },
   "devDependencies": {
     "babel-core": "^6.17.0",
@@ -46,6 +54,7 @@
     "grunt-release": "^0.13.0",
     "json-loader": "^0.5.4",
     "mocha": "^2.4.5",
+    "phantomjs-prebuilt": "*",
     "mocha-phantomjs": "^4.1.0",
     "publish": "^0.6.0",
     "webpack": "~1.13.1",
