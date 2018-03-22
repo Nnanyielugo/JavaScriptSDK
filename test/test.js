@@ -1,7 +1,5 @@
 
 var SECURE_KEY = "1227d1c4-1385-4d5f-ae73-23e99f74b006";
-
-
 var URL = "http://localhost:4730";
 
    var util = {
@@ -3235,6 +3233,117 @@ describe("CloudEvent", function() {
 
 });
 
+describe("CloudDevice", function () {
+
+    it("Should create new device with all fields", function (done) {
+        if(CB._isNode){
+           done();
+           return;
+        }
+
+        this.timeout(300000);       
+
+        var obj = new CB.CloudObject('Device');
+        obj.set('deviceToken', "data");
+        obj.set('deviceOS', "windows");
+        obj.set('timezone', "chile");
+        obj.set('channels', ["pirates","hackers","stealers"]);
+        obj.set('metadata', {"appname":"hdhfhfhfhf"});
+        obj.save({
+            success : function(savedObj){
+                if(savedObj){
+                    done();
+                }else{
+                    done("error on creating device object");
+                }
+            },error : function(error){
+                done(error);
+            }
+        });
+    });
+
+    it("Should fail on creating device with same deviceToken twice", function (done) {
+        if(CB._isNode){
+           done();
+           return;
+        }
+
+        this.timeout(300000);       
+
+        var obj = new CB.CloudObject('Device');
+        obj.set('deviceToken', "hdgdd");        
+        obj.save({
+            success : function(savedObj){
+                if(savedObj){
+
+                    var obj = new CB.CloudObject('Device');
+                    obj.set('deviceToken', "hdgdd");        
+                    obj.save({
+                        success : function(savedObj2){
+                            if(savedObj2){
+                               done("created twice with same deviceToken");
+                            }else{
+                                done();
+                            }
+                        },error : function(error){
+                            done();
+                        }
+                    });
+
+                }else{
+                    done("error on creating device object");
+                }
+            },error : function(error){
+                done(error);
+            }
+        });
+    });
+
+    it("Should update device", function (done) {
+        if(CB._isNode){
+           done();
+           return;
+        }
+
+        this.timeout(300000);       
+
+        var obj = new CB.CloudObject('Device');
+        obj.set('deviceToken', "token");
+        obj.set('deviceOS', "windows");
+        obj.set('timezone', "chile");
+        obj.set('channels', ["pirates","hackers","stealers"]);
+        obj.set('metadata', {"appname":"hdhfhfhfhf"});
+        obj.save({
+            success : function(savedObj){
+                if(savedObj){
+
+                    savedObj.set('deviceToken', "toke2");
+                    savedObj.set('deviceOS', "windows2");
+                    savedObj.set('timezone', "chile2");
+                    savedObj.set('channels', ["pirates2","hackers2","stealers2"]);
+                    savedObj.set('metadata', {"appname":"hdhfhfhfhf2"});
+                    savedObj.save({
+                        success : function(savedObj2){
+                            if(savedObj2){
+                                done();
+                            }else{
+                                done("error on updating device object");
+                            }
+                        },error : function(error){
+                            done(error);
+                        }
+                    });
+
+                }else{
+                    done("error on creating device object for the first time");
+                }
+            },error : function(error){
+                done(error);
+            }
+        });
+    });    
+
+});
 
 describe("CloudPush", function (done) {
 
@@ -3592,6 +3701,9 @@ describe("CloudPush", function (done) {
     });  
 
 }); 
+
+  
+
 describe("Cloud Object", function() {
 
     //Use Sample Table.
@@ -10952,6 +11064,23 @@ describe("Cloud Table", function(){
         });
         
     });
+
+    it("should add a column to an existing table",function(done){
+        this.timeout(90000);
+        var obj = new CB.CloudTable(tableName);
+        CB.CloudTable.get(obj).then(function(table){
+        	var column1 = new CB.Column('', 'Text', true, false);
+		    table.addColumn(column1);
+		    table.save().then(function(table){
+		          done("Saved a table with an empty column.");
+		    },function(){
+                done();
+            });
+        },function(){
+            done("should fetch the table");
+        });
+        
+    });
     
 	it("should add a column to the table after save.",function(done){
         this.timeout(80000);
@@ -11307,6 +11436,26 @@ describe("Table level ACL, for editing and getting table via clientKey", functio
 
 });
 
+describe("Cloud App is connected.", function() {
+
+    //Use Sample Table.
+    // -> Which has columns :
+    // name : string : required.
+
+    it("Should check if the CloudApp is connected. ",function(done){
+
+        this.timeout(30000);
+
+        var tableName = util.makeString();
+
+        if(CB.CloudApp.isConnected){
+            done();
+        }else{
+            done("Cloud App is not connected.");
+        }
+    })
+    
+});
 describe("App level ACL, for adding deleting tables of an app via clientKey", function(){
 
     before(function(){
@@ -12128,6 +12277,55 @@ describe("Disabled - Cloud Objects Notification", function() {
       }catch(e){
         done();
       }
+    });
+
+});
+describe("Disabled Cloud Object test", function() {
+
+    before(function(){
+        this.timeout(10000);
+        CB.appKey = CB.masterKey;
+    });
+
+    it("should save cloudObject", function(done) {
+        this.timeout('30000');
+
+        var table = new CB.CloudTable('uniqueTablename');
+        var column = new CB.Column('name');
+        column.dataType = 'Text';
+        table.addColumn(column);
+        table.save({
+            success : function(table){
+
+                var obj = new CB.CloudObject('uniqueTablename');
+                obj.set('name', 'sample');
+                obj.save({
+                    success : function(newObj){
+                        if(obj.get('name') !== 'sample'){
+                            done("name is not equal to what was saved.");
+                            throw 'name is not equal to what was saved.';
+                        }
+                        if(!obj.id){
+                            done('id is not updated after save.');
+                            throw 'id is not updated after save.';
+                        }
+
+                        done();
+                    }, error : function(error){
+                        done(error);
+                        throw 'Error saving the object';
+                    }
+                });
+
+            }, error : function(error){
+                done(error);
+            }
+        });        
+
+    });
+
+    after(function() {
+        CB.appKey = CB.jsKey;
     });
 
 });
