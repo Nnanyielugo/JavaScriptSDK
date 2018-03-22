@@ -2802,7 +2802,7 @@ describe("CloudUser", function () {
             domain:"cloudboost.io",
             enabled:true
             },
-            fromEmail:"hello@cloudboost.io",
+            fromEmail:"test@cloudboost.io",
             fromName:"CloudBoost.io"           
         };
 
