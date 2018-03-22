@@ -1,6 +1,6 @@
 # IMPORTANT
 
-This repo is merged with github.com/cloudboost/cloudboost. Work on this repo is deprecated. 
+This repo is merged with github.com/cloudboost/cloudboost. This repo is now deprecated. 
 
 # Introduction
 
